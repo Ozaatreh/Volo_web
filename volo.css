@@ -1,0 +1,164 @@
+/* Smooth fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animated Gradient Background */
+@keyframes animatedGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes colorFade {
+  0% {
+      color: #c4c4c4;
+  }
+
+  50% {
+      color: #4da8e1;
+  }
+
+  100% {
+      color: #000000;
+  }
+}
+
+h1 {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  animation: colorFade 3s infinite alternate ease-in-out;
+}
+/* Full-page gradient background */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(45deg, #5d8ee8, #81a5e3, #556ee6, #3a7ae9);
+  background-size: 300% 300%;
+  animation: animatedGradient 8s ease infinite;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Login Container */
+.login-container {
+  background-color: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 400px;
+  animation: fadeIn 1s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+/* Icon Styling */
+.icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 15px;
+}
+
+/* Form Heading */
+h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 600;
+}
+
+/* Form Group Styling */
+.form-group {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+/* Label Styling */
+label {
+  display: block;
+  margin-bottom: 6px;
+  color: #444;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+}
+
+/* Input Fields Styling */
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: 0.3s;
+  background-color: white;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Input Focus Effect */
+input:focus, select:focus {
+  outline: none;
+  border-color: #556ee6;
+  box-shadow: 0 0 10px rgba(85, 110, 230, 0.4);
+  transform: scale(1.01);
+}
+
+/* Button Styling */
+button {
+  width: 70%;
+  padding: 12px;
+  background: linear-gradient(45deg, #556ee6, #4455c7);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+/* Button Hover Effect */
+button:hover {
+  background: linear-gradient(45deg, #4455c7, #2a5298);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.forgot-password {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Forgot Password & Sign Up Links */
+p {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+p a {
+  color: #556ee6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+p a:hover {
+  color: #3189b8;
+  text-decoration: underline;
+}
