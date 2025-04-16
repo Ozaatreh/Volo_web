@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Volunteer Dashboard</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background-color: #1976d2;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .sidebar {
+      display: none;
+      background-color: #f1f1f1;
+      width: 200px;
+      flex-shrink: 0;
+      flex-direction: column;
+    }
+
+    .sidebar button {
+      background: none;
+      border: none;
+      padding: 1rem;
+      text-align: left;
+      width: 100%;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .sidebar button:hover {
+      background-color: #ddd;
+    }
+
+    .content {
+      flex: 1;
+      padding: 1.5rem;
+    }
+
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      background-color: #1976d2;
+      color: white;
+      padding: 0.8rem 0;
+    }
+
+    .bottom-nav button {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    @media (min-width: 768px) {
+      .sidebar {
+        display: flex;
+      }
+
+      .bottom-nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Volunteer Dashboard</h1>
+  </header>
+
+  <div class="container">
+    <div class="sidebar">
+      <button onclick="showPage('achievement')">🎁 Achievement</button>
+      <button onclick="showPage('home')">🏠 Home</button>
+      <button onclick="showPage('account')">👤 Account</button>
+    </div>
+
+    <div class="content" id="content">
+      <h2>Home</h2>
+      <p>Welcome to the volunteer dashboard!</p>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <button onclick="showPage('achievement')">🎁</button>
+    <button onclick="showPage('home')">🏠</button>
+    <button onclick="showPage('account')">👤</button>
+  </div>
+
+  <script>
+    function showPage(page) {
+      const content = document.getElementById("content");
+      if (page === 'achievement') {
+        content.innerHTML = '<h2>Achievements</h2><p>Your badges and rewards appear here.</p>';
+      } else if (page === 'home') {
+        content.innerHTML = '<h2>Home</h2><p>Welcome to the volunteer dashboard!</p>';
+      } else if (page === 'account') {
+        content.innerHTML = '<h2>Account</h2><p>View and update your profile.</p>';
+      }
+    }
+  </script>
+
+</body>
+</html>

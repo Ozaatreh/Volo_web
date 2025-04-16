@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - VOLO</title>
+    <link rel="stylesheet" href="volo.css">
+</head>
+<body>
+    <div class="login-container">
+        <img src="https://raw.githubusercontent.com/Ozaatreh/GP_Volo/refs/heads/main/assets/volo_icon1.png" alt="VOLO Logo" class="logo">
+        <h1>V O L O</h1>
+
+        <input type="email" id="email" placeholder="Email">
+        <br>
+        <input type="password" id="password" placeholder="Password">
+        <br>
+        <button id="loginButton">Login</button>
+        <p id="errorMessage" class="error-message"></p>
+
+        <p>Don't have an account? <a href="register.html">Register Here</a></p>
+        <p class="forgot-password"><a href="forgot_password.html">Forgot Password?</a></p>
+        <p id="message"></p>
+
+        <!-- Google Login Button -->
+        <div class="google-login-container">
+            <img id="googleLogin" src="https://banner2.cleanpng.com/20180728/tju/2b0b7557d6ca87c808e142b8505c46db.webp" alt="Google Login" class="google-login-button">
+        </div>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAlZJFpV4ApjkaQE0tH3P_VfSmK9PHgihk",
+            authDomain: "volunteer-community-c691d.firebaseapp.com",
+            projectId: "volunteer-community-c691d",
+            storageBucket: "volunteer-community-c691d.appspot.com",
+            messagingSenderId: "534367058264",
+            appId: "1:534367058264:web:a6b3fa5bfb58f186a7cd2d",
+            measurementId: "G-0HDWR98XPT"
+        };
+    
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+    
+        // Email & Password Login
+        document.getElementById("loginButton").addEventListener("click", async () => {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const errorMessage = document.getElementById("errorMessage");
+    
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                console.log("Login successful:", userCredential.user);
+                window.location.href = "nav_bar_volunteer.html"; 
+            } catch (error) {
+                errorMessage.innerText = error.message;
+            }
+        });
+    
+        // Google Login
+        document.getElementById("googleLogin").addEventListener("click", async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                console.log("Google Login successful:", result.user);
+                window.location.href = "home.html";
+            } catch (error) {
+                console.error("Google Sign-In Error:", error.message);
+                document.getElementById("errorMessage").innerText = error.message;
+            }
+        });
+
+        function navigateToPage(userType) {
+            switch (userType) {
+                case 'Ngo':
+                    window.location.href = 'ngo.html';
+                    break;
+                case 'Volunteer':
+                    window.location.href = 'nav_bar_volunteer.html';
+                    break;
+                case 'Leader':
+                    window.location.href = 'leader.html';
+                    break;
+                case 'Admin':
+                    window.location.href = 'admin.html';
+                    break;
+                case 'University':
+                    window.location.href = 'university.html';
+                    break;
+                default:
+                    window.location.href = 'user.html';
+            }
+        }
+
+    </script>
+    
+
+    <style>
+        .google-login-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .google-login-button {
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</body>
+</html>
+  <!-- // Navigate to page based on user type
+        function navigateToPage(userType) {
+            switch (userType) {
+                case 'Ngo':
+                    window.location.href = 'ngo.html';
+                    break;
+                case 'Volunteer':
+                    window.location.href = 'user.html';
+                    break;
+                case 'Leader':
+                    window.location.href = 'leader.html';
+                    break;
+                case 'Admin':
+                    window.location.href = 'admin.html';
+                    break;
+                case 'University':
+                    window.location.href = 'university.html';
+                    break;
+                default:
+                    window.location.href = 'user.html';
+            }
+        } -->
+

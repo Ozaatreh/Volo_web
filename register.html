@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOLO - Register</title>
+    <link rel="stylesheet" href="register.css">
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">
+            <img src="https://raw.githubusercontent.com/Ozaatreh/GP_Volo/refs/heads/main/assets/volo_icon1.png"
+                alt="VOLO Logo">
+            <h1>V O L O</h1>
+        </div>
+
+        <div id="message-container"></div>
+
+        <div class="form-group">
+            <input type="text" id="username" class="form-control" placeholder="Username">
+        </div>
+
+        <div class="form-group">
+            <input type="email" id="email" class="form-control" placeholder="Email">
+        </div>
+
+        <div class="form-group">
+            <input type="password" id="password" class="form-control" placeholder="Password">
+        </div>
+
+        <div class="form-group">
+            <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm Password">
+        </div>
+
+        <div class="form-group">
+            <label for="datePickerInput" id="dateLabel">Birth Date</label>
+            <input type="date" id="datePickerInput" placeholder="Birth Date">
+        </div>
+
+
+        <div class="form-group">
+            <div class="dropdown">
+                <button class="dropdown-toggle" id="genderDropdown">
+                    <span id="genderText">Sex</span>
+                    <!-- <i class="material-icons">arrow_drop_down</i> -->
+                </button>
+                <div class="dropdown-menu" id="genderMenu">
+                    <button class="dropdown-item" onclick="selectGender('Male')">Male</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectGender('Female')">Female</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="dropdown">
+                <button class="dropdown-toggle" id="userTypeDropdown">
+                    <span id="userTypeText">Select User Type</span>
+                    <!-- <i class="material-icons">arrow_drop_down</i> -->
+                </button>
+                <div class="dropdown-menu" id="userTypeMenu">
+                    <button class="dropdown-item" onclick="selectUserType('Ngo')">Npo</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUserType('Volunteer')">Volunteer</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUserType('University')">University</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="dropdown">
+                <button class="dropdown-toggle" id="universityDropdown">
+                    <span id="universityText">Select University</span>
+                    <!-- <i class="material-icons">arrow_drop_down</i> -->
+                </button>
+                <div class="dropdown-menu" id="universityMenu">
+                    <button class="dropdown-item" onclick="selectUniversity('Not a Student')">Not a Student</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('(Wise) The World Islamic Scie..')">(Wise)
+                        The World Islamic Scie..</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('University of Jordan')">University of
+                        Jordan</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Yarmouk University')">Yarmouk
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Jordan University of Scie..')">Jordan
+                        University of Scie..</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Al-Balqa Applied University')">Al-Balqa'
+                        Applied University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Hashemite University')">Hashemite
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Mutah University')">Mutah
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('German Jordanian University')">German
+                        Jordanian University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Princess Sumaya University')">Princess
+                        Sumaya University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item"
+                        onclick="selectUniversity('Al-Hussein Bin Talal University')">Al-Hussein Bin Talal
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Tafila Technical University')">Tafila
+                        Technical University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Al-Ahliyya Amman University')">Al-Ahliyya
+                        Amman University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item"
+                        onclick="selectUniversity('Applied Science Private University')">Applied Science Private
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Middle East University')">Middle East
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Petra University')">Petra
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Philadelphia University')">Philadelphia
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Zarqa University')">Zarqa
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Amman Arab University')">Amman Arab
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Irbid National University')">Irbid National
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Jadara University')">Jadara
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Ajloun National University')">Ajloun
+                        National University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('American University of Madaba')">American
+                        University of Madaba</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Al-Isra University')">Al-Isra
+                        University</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectUniversity('Jordan Academy of Music')">Jordan Academy
+                        of Music</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="dropdown">
+                <button class="dropdown-toggle" id="cityDropdown">
+                    <span id="cityText">Select City</span>
+                    <!-- <i class="material-icons">arrow_drop_down</i> -->
+                </button>
+                <div class="dropdown-menu" id="cityMenu">
+                    <button class="dropdown-item" onclick="selectCity('Ajloun')">Ajloun</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectCity('Amman')">Amman</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectCity('Aqaba')">Aqaba</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectCity('Balqa')">Balqa</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectCity('Irbid')">Irbid</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectCity('Jerash')">Jerash</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectCity('Karak')">Karak</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectCity('Ma\'an')">Ma'an</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectCity('Madaba')">Madaba</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectCity('Mafraq')">Mafraq</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectCity('Tafilah')">Tafilah</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item" onclick="selectCity('Zarqa')">Zarqa</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn" id="registerBtn">Register</button>
+
+        <div class="login-link">
+            Already have an account? <a href="#" id="loginLink">Login Here</a>
+        </div>
+    </div>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAlZJFpV4ApjkaQE0tH3P_VfSmK9PHgihk",
+            authDomain: "volunteer-community-c691d.firebaseapp.com",
+            databaseURL: "https://volunteer-community-c691d-default-rtdb.firebaseio.com",
+            projectId: "volunteer-community-c691d",
+            storageBucket: "volunteer-community-c691d.appspot.com",
+            messagingSenderId: "534367058264",
+            appId: "1:534367058264:web:a6b3fa5bfb58f186a7cd2d",
+            measurementId: "G-0HDWR98XPT"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // DOM elements
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+        const confirmPasswordInput = document.getElementById('confirmPassword');
+        const birthDateInput = document.getElementById('birthDate');
+        const datePickerBtn = document.getElementById('datePickerBtn');
+        const registerBtn = document.getElementById('registerBtn');
+        const loginLink = document.getElementById('loginLink');
+        const loading = document.getElementById('loading');
+        const messageContainer = document.getElementById('message-container');
+
+        // Dropdown elements
+        const genderDropdown = document.getElementById('genderDropdown');
+        const genderMenu = document.getElementById('genderMenu');
+        const genderText = document.getElementById('genderText');
+
+        const userTypeDropdown = document.getElementById('userTypeDropdown');
+        const userTypeMenu = document.getElementById('userTypeMenu');
+        const userTypeText = document.getElementById('userTypeText');
+
+        const universityDropdown = document.getElementById('universityDropdown');
+        const universityMenu = document.getElementById('universityMenu');
+        const universityText = document.getElementById('universityText');
+
+        const cityDropdown = document.getElementById('cityDropdown');
+        const cityMenu = document.getElementById('cityMenu');
+        const cityText = document.getElementById('cityText');
+
+        // Selected values
+        let selectedBirthDate = null;
+        let selectedGender = null;
+        let selectedUserType = null;
+        let selectedUniversity = null;
+        let selectedCity = null;
+
+        // Toggle dropdown menus
+        genderDropdown.addEventListener('click', () => {
+            genderMenu.classList.toggle('show');
+            userTypeMenu.classList.remove('show');
+            universityMenu.classList.remove('show');
+            cityMenu.classList.remove('show');
+        });
+
+        userTypeDropdown.addEventListener('click', () => {
+            userTypeMenu.classList.toggle('show');
+            genderMenu.classList.remove('show');
+            universityMenu.classList.remove('show');
+            cityMenu.classList.remove('show');
+        });
+
+        universityDropdown.addEventListener('click', () => {
+            universityMenu.classList.toggle('show');
+            genderMenu.classList.remove('show');
+            userTypeMenu.classList.remove('show');
+            cityMenu.classList.remove('show');
+        });
+
+        cityDropdown.addEventListener('click', () => {
+            cityMenu.classList.toggle('show');
+            genderMenu.classList.remove('show');
+            userTypeMenu.classList.remove('show');
+            universityMenu.classList.remove('show');
+        });
+
+        // Close dropdowns when clicking outside
+        window.addEventListener('click', (e) => {
+            if (!e.target.matches('.dropdown-toggle')) {
+                genderMenu.classList.remove('show');
+                userTypeMenu.classList.remove('show');
+                universityMenu.classList.remove('show');
+                cityMenu.classList.remove('show');
+            }
+        });
+
+        // Select gender
+        function selectGender(gender) {
+            selectedGender = gender;
+            genderText.textContent = gender;
+            genderMenu.classList.remove('show');
+        }
+
+        // Select user type
+        function selectUserType(userType) {
+            selectedUserType = userType;
+            userTypeText.textContent = userType;
+            userTypeMenu.classList.remove('show');
+        }
+
+        // Select university
+        function selectUniversity(university) {
+            selectedUniversity = university;
+            universityText.textContent = university;
+            universityMenu.classList.remove('show');
+        }
+
+        // Select city
+        function selectCity(city) {
+            selectedCity = city;
+            cityText.textContent = city;
+            cityMenu.classList.remove('show');
+        }
+
+        // This will store the selected date
+
+        const dateInput = document.getElementById('datePickerInput');
+        const today = new Date();
+        const maxDate = new Date(2008, 11, 31); // December 31, 2008
+        const minDate = new Date(1950, 0, 1); // January 1, 1950
+
+        // Set the minimum and maximum date
+        dateInput.max = maxDate.toISOString().split('T')[0];
+        dateInput.min = minDate.toISOString().split('T')[0];
+
+        // Optionally, set an initial value (default to 1999-01-01 or empty)
+        dateInput.valueAsDate = new Date(1999, 0, 1); // Default to 1999
+
+        // Optional: Handle date change event
+      dateInput.addEventListener('change', (e) => {
+  selectedBirthDate = e.target.value; // ← This stores the selected date
+  console.log('Selected date:', selectedBirthDate);
+});
+
+
+
+
+
+        // Display message
+        function displayMessage(message, type = 'danger') {
+            messageContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    ${message}
+                </div>
+            `;
+        }
+
+        // Register user
+        registerBtn.addEventListener('click', async () => {
+            // Validate inputs
+            if (!usernameInput.value || !emailInput.value || !passwordInput.value || !confirmPasswordInput.value) {
+                displayMessage('Please fill in all fields');
+                return;
+            }
+
+            if (passwordInput.value !== confirmPasswordInput.value) {
+                displayMessage("Passwords don't match!");
+                return;
+            }
+
+            if (!selectedBirthDate) {
+                displayMessage('Please select your birthdate');
+                return;
+            }
+
+            if (!selectedGender) {
+                displayMessage('Please select your gender');
+                return;
+            }
+
+            if (!selectedUserType) {
+                displayMessage('Please select user type');
+                return;
+            }
+
+            if (!selectedUniversity) {
+                displayMessage('Please select university');
+                return;
+            }
+
+            if (!selectedCity) {
+                displayMessage('Please select city');
+                return;
+            }
+
+            // Show loading
+            loading.style.display = 'flex';
+
+            try {
+                // Create user with email and password
+                const userCredential = await auth.createUserWithEmailAndPassword(
+                    emailInput.value,
+                    passwordInput.value
+                );
+
+                // Create user document in Firestore
+                await createUserDocument(userCredential.user);
+
+                // Send verification email
+                await userCredential.user.sendEmailVerification();
+
+                // Hide loading
+                loading.style.display = 'none';
+
+                // Show success message
+                displayMessage('Verification email sent! Please check your inbox.', 'success');
+
+                // Handle user navigation
+                await handleUserNavigation(userCredential.user);
+
+            } catch (error) {
+                // Hide loading
+                loading.style.display = 'none';
+
+                // Show error message
+                displayMessage(error.message);
+            }
+        });
+
+        // Create user document
+        async function createUserDocument(user) {
+            try {
+                await db.collection('Users').doc(user.email).set({
+                    email: user.email,
+                    username: usernameInput.value,
+                    userType: selectedUserType,
+                    city: selectedCity,
+                    birthday: selectedBirthDate,
+                    gender: selectedGender,
+                    university: selectedUniversity
+                });
+            } catch (error) {
+                console.error('Error creating user document:', error);
+                throw error;
+            }
+        }
+
+        // Handle user navigation
+        async function handleUserNavigation(user) {
+            await user.reload();
+
+            if (user.emailVerified) {
+                const userDoc = await db.collection('Users').doc(user.email).get();
+
+                if (userDoc.exists) {
+                    const userType = userDoc.data().userType;
+                    navigateToPage(userType);
+                } else {
+                    displayMessage('User document not found!');
+                }
+            } else {
+                displayMessage('Please check your inbox and verify your email to proceed.', 'success');
+            }
+        }
+
+        // Navigate to page based on user type
+        function navigateToPage(userType) {
+            switch (userType) {
+                case 'Ngo':
+                    window.location.href = 'ngo.html';
+                    break;
+                case 'Volunteer':
+                    window.location.href = 'user.html';
+                    break;
+                case 'Leader':
+                    window.location.href = 'leader.html';
+                    break;
+                case 'Admin':
+                    window.location.href = 'admin.html';
+                    break;
+                case 'University':
+                    window.location.href = 'university.html';
+                    break;
+                default:
+                    window.location.href = 'user.html';
+            }
+        }
+
+        // Login link
+        loginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+
+</html>
