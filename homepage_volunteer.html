@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volunteers Page</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <style>
+    /* Animated Gradient Background */
+@keyframes animatedGradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes colorFade {
+  0% {
+      color: #c4c4c4;
+  }
+
+  50% {
+      color: #4da8e1;
+  }
+
+  100% {
+      color: #000000;
+  }
+}
+
+h1,h3 {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  /* animation: colorFade 3s infinite alternate ease-in-out; */
+}
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(45deg, #5d8ee8, #81a5e3, #556ee6, #3a7ae9);
+  background-size: 300% 300%;
+  animation: animatedGradient 8s ease infinite;
+      /* font-family: 'Roboto', sans-serif; */
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    
+        /* Drawer styles */
+        .drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 280px;
+      height: 100vh;
+      background-color: #ffffff;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    
+    .drawer.open {
+      transform: translateX(0);
+    }
+    
+    .drawer-header {
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .drawer-header img {
+      width: 130px;
+      height: 130px;
+    }
+    
+    .drawer-content {
+      flex: 1;
+      padding: 20px 0;
+    }
+    
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 25px;
+      cursor: pointer;
+      color: #333333;
+      text-decoration: none;
+      transition: background-color 0.2s;
+    }
+    
+    .drawer-item:hover {
+      background-color: #f5f5f5;
+    }
+    
+    .drawer-item i {
+      margin-right: 20px;
+      color: #0b0b0b;
+    }
+    
+    .drawer-item span {
+      font-family: 'Roboto', sans-serif;
+      font-size: 18px;
+      font-weight: 300;
+    }
+    
+    .drawer-footer {
+      padding: 20px 0;
+    }
+    
+    /* Menu button */
+    .menu-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+      background-color: #027af2;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    /* Overlay for when drawer is open */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 999;
+      display: none;
+    }
+    
+    .overlay.open {
+      display: block;
+    }
+    
+    .app-bar {
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      background-color: #fcfcfc;
+      color: rgb(6, 6, 6);
+      padding: 16px;
+      text-align: center;
+      font-size: 30px;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .card {
+      background-color: white;
+      border-radius: 10px;
+      margin: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .post-actions {
+      display: flex;
+      align-items: center;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+    }
+    
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-left: 8px;
+      object-fit: cover;
+    }
+    
+    .post-content {
+      margin-top: 16px;
+    }
+    
+    .location-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .progress-container {
+      margin: 16px 0;
+    }
+    
+    .progress-bar {
+      height: 6px;
+      border-radius: 3px;
+      background-color: #e0e0e0;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background-color: #1676e4;
+    }
+    
+    .progress-fill.orange {
+      background-color: #ff9800;
+    }
+    
+    .progress-text {
+      text-align: right;
+      font-size: 14px;
+      color: #666;
+      margin-top: 4px;
+    }
+    
+    .divider {
+      height: 1px;
+      background-color: #e0e0e0;
+      margin: 16px 0;
+    }
+    
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+    }
+    
+    button {
+      background-color: #0070ef;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    button:hover {
+      background-color: #1676e4;
+    }
+    
+    .loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100px;
+    }
+    
+    .spinner {
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top: 4px solid #000000;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 8px;
+      display: inline-block;
+    }
+    
+    .status-dot.upcoming {
+      background-color: #4caf50;
+    }
+    
+    .status-dot.in_progress {
+      background-color: #ff9800;
+    }
+    
+    .status-dot.completed {
+      background-color: #f44336;
+    }
+    
+    .error-message {
+      color: #f44336;
+      text-align: center;
+      margin: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-bar">Volunteers Page</div>
+  
+    <!-- Menu Button -->
+    <button class="menu-button" id="menuButton">
+      <i class="material-icons">menu</i>
+    </button>
+    
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- Drawer -->
+    <div class="drawer" id="drawer">
+      <div class="drawer-header">
+        <img src="https://raw.githubusercontent.com/Ozaatreh/GP_Volo/refs/heads/main/assets/volo_icon1.png" alt="VOLO Logo">
+      </div>
+      
+      <div class="drawer-content">
+        <a href="Users_Toggle_page.html" class="drawer-item">
+          <i class="material-icons">home</i>
+          <span>Home</span>
+        </a>
+        
+        <a href="setting_page.html" class="drawer-item">
+          <i class="material-icons">settings</i>
+          <span>Settings</span>
+        </a>
+        
+        <a href="FAQ.html" class="drawer-item">
+          <i class="material-icons">contact_support</i>
+          <span>FAQ</span>
+        </a>
+        
+        <a href="about_us_page.html" class="drawer-item">
+          <i class="material-icons">group</i>
+          <span>About us</span>
+        </a>
+        
+        <a href="Contact_us_page.html" class="drawer-item">
+          <i class="material-icons">phone</i>
+          <span>Contact us</span>
+        </a>
+        
+        <a href="history.html" class="drawer-item">
+          <i class="material-icons">history</i>
+          <span>History</span>
+        </a>
+        
+        <a href="users_log_page.html" class="drawer-item">
+          <i class="material-icons">people_outline</i>
+          <span>Userslog</span>
+        </a>
+      </div>
+      
+      <div class="drawer-footer">
+        <a href="login_register_page.html" class="drawer-item">
+          <i class="material-icons">logout</i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+
+  <div id="posts-container">
+    <div class="loading">
+      <div class="spinner"></div>
+    </div>
+  </div>
+  
+  
+  <script>
+
+      // Drawer toggle functionality
+      const menuButton = document.getElementById('menuButton');
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('overlay');
+    
+    menuButton.addEventListener('click', () => {
+      drawer.classList.toggle('open');
+      overlay.classList.toggle('open');
+    });
+    
+    overlay.addEventListener('click', () => {
+      drawer.classList.remove('open');
+      overlay.classList.remove('open');
+    });
+    
+    // Close drawer when clicking on any drawer item
+    document.querySelectorAll('.drawer-item').forEach(item => {
+      item.addEventListener('click', () => {
+        drawer.classList.remove('open');
+        overlay.classList.remove('open');
+      });
+    });
+
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAlZJFpV4ApjkaQE0tH3P_VfSmK9PHgihk",
+      authDomain: "volunteer-community-c691d.firebaseapp.com",
+      projectId: "volunteer-community-c691d",
+      storageBucket: "volunteer-community-c691d.appspot.com",
+      messagingSenderId: "534367058264",
+      appId: "1:534367058264:web:a6b3fa5bfb58f186a7cd2d",
+      measurementId: "G-0HDWR98XPT"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    
+    // Global variables
+    let currentUser = null;
+    let appliedVolunteerPostIds = [];
+    let appliedVolunteerEventDates = [];
+    
+    // Initialize the app
+    document.addEventListener("DOMContentLoaded", () => {
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          currentUser = user;
+          fetchAppliedPosts();
+        } else {
+          window.location.href = "login.html";
+        }
+      });
+    });
+    
+    // Fetch posts the user has applied to
+    function fetchAppliedPosts() {
+      if (!currentUser) return;
+      
+      db.collection("Posts")
+        .where("AppliedUsers", "array-contains", currentUser.email)
+        .get()
+        .then(querySnapshot => {
+          appliedVolunteerPostIds = [];
+          appliedVolunteerEventDates = [];
+          
+          querySnapshot.forEach(doc => {
+            const post = doc.data();
+            appliedVolunteerPostIds.push(doc.id);
+            if (post.EventDate) {
+              appliedVolunteerEventDates.push(post.EventDate.toDate());
+            }
+          });
+          
+          // Now fetch all posts
+          fetchPosts();
+        })
+        .catch(error => {
+          console.error("Error fetching applied posts:", error);
+          fetchPosts(); // Still try to load regular posts
+        });
+    }
+    
+     // Modified fetchPosts function with proper error handling
+     function fetchPosts() {
+      // First try with the compound query
+      db.collection("Posts")
+        .where("status", "==", "upcoming")
+        .orderBy("EventDate", "desc")
+        .get()
+        .then(querySnapshot => {
+          renderPosts(querySnapshot);
+        })
+        .catch(error => {
+          console.error("Error with compound query:", error);
+          
+          // Fallback to simple query if index isn't ready
+          if (error.code === 'failed-precondition') {
+            console.log("Using fallback query while index builds");
+            db.collection("Posts")
+              .where("status", "==", "upcoming")
+              .get()
+              .then(querySnapshot => {
+                // Convert to array and sort client-side
+                const posts = [];
+                querySnapshot.forEach(doc => {
+                  posts.push(doc);
+                });
+                
+                // Sort by EventDate descending
+                posts.sort((a, b) => {
+                  const dateA = a.data().EventDate.toDate();
+                  const dateB = b.data().EventDate.toDate();
+                  return dateB - dateA;
+                });
+                
+                // Create a mock QuerySnapshot with docs array
+                const mockSnapshot = {
+                  docs: posts,
+                  empty: posts.length === 0,
+                  forEach: function(callback) {
+                    this.docs.forEach(doc => callback(doc));
+                  }
+                };
+                
+                renderPosts(mockSnapshot);
+              })
+              .catch(fallbackError => {
+                console.error("Fallback query failed:", fallbackError);
+                showError("Error loading posts. Please try again later.");
+              });
+          } else {
+            showError("Error loading posts: " + error.message);
+          }
+        });
+    }
+
+    // Modified renderPosts function to handle both real and mock snapshots
+    function renderPosts(snapshot) {
+      const container = document.getElementById("posts-container");
+      
+      if (snapshot.empty) {
+        container.innerHTML = `
+          <div class="empty-state">
+            No Upcoming Events Yet.
+          </div>
+        `;
+        return;
+      }
+      
+      let postsHTML = "";
+      snapshot.forEach(doc => {
+        const post = doc.data();
+        post.id = doc.id;
+        
+        if (shouldHidePost(post.id, post.EventDate.toDate())) {
+          return;
+        }
+        
+        const formattedDate = formatDate(post.EventDate.toDate());
+        const hasApplied = appliedVolunteerPostIds.includes(post.id);
+        
+        postsHTML += createPostHTML(post, formattedDate, hasApplied);
+      });
+      
+      container.innerHTML = postsHTML;
+    }
+    
+    
+    
+    function createPostHTML(post, formattedDate, hasApplied) {
+      return `
+        <div class="card">
+          <div class="post-header">
+            <div class="post-actions">
+              <span class="status-dot ${post.status}"></span>
+              <i class="material-icons">more_horiz</i>
+            </div>
+            <div class="user-info">
+              <span>${post.Username || "Unknown"}</span>
+              <img src="${post.UserImage || 'assets/default-avatar.jpg'}" class="user-avatar">
+            </div>
+          </div>
+          
+          <div class="post-content">
+            <div class="location-row">
+              <i class="material-icons" style="color: red;">location_on</i>
+              <span>Event Date: ${formattedDate}</span>
+            </div>
+            
+            <p>${post.PostMessage}</p>
+            
+            ${post.ImageUrl ? `<img src="${post.ImageUrl}" style="width: 100%; max-width: 300px; height: auto; margin: 20px 0;">` : ''}
+            
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill orange" style="width: ${calculatePercentage(post.LeaderCount, post.LeaderMaxCount)}%"></div>
+              </div>
+              <div class="progress-text">${post.LeaderCount || 0} / ${post.LeaderMaxCount || 5} (Leaders)</div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${calculatePercentage(post.CurrentCount, post.TargetCount)}%"></div>
+              </div>
+            </div>
+            
+            <div class="action-row">
+              <button onclick="toggleApplication('${post.id}', ${post.EventDate.toDate().getTime()}, ${hasApplied})">
+                ${hasApplied ? "Cancel" : "Apply"}
+              </button>
+              <span class="progress-text">${post.CurrentCount || 0} / ${post.TargetCount || 10} (Volunteers)</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    
+    function calculatePercentage(current, total) {
+      if (!total || total === 0) return 0;
+      return Math.min(100, Math.round((current || 0) / total * 100));
+    }
+    
+    function showError(message) {
+      document.getElementById("posts-container").innerHTML = `
+        <div class="error-message">
+          ${message}
+        </div>
+      `;
+    }
+    
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    
+    function shouldHidePost(postId, eventDate) {
+      // Show posts already applied by the user
+      if (appliedVolunteerPostIds.includes(postId)) {
+        return false;
+      }
+      
+      // Check for conflicting event dates
+      return appliedVolunteerEventDates.some(date => 
+        date.getFullYear() === eventDate.getFullYear() &&
+        date.getMonth() === eventDate.getMonth() &&
+        date.getDate() === eventDate.getDate()
+      );
+    }
+    
+    function toggleApplication(postId, timestamp, hasApplied) {
+      if (!currentUser) return;
+      
+      const postRef = db.collection("Posts").doc(postId);
+      const eventDate = new Date(timestamp);
+      
+      if (hasApplied) {
+        // Cancel application
+        postRef.update({
+          AppliedUsers: firebase.firestore.FieldValue.arrayRemove(currentUser.email),
+          CurrentCount: firebase.firestore.FieldValue.increment(-1)
+        })
+        .then(() => {
+          appliedVolunteerPostIds = appliedVolunteerPostIds.filter(id => id !== postId);
+          appliedVolunteerEventDates = appliedVolunteerEventDates.filter(date => 
+            !(date.getFullYear() === eventDate.getFullYear() &&
+              date.getMonth() === eventDate.getMonth() &&
+              date.getDate() === eventDate.getDate())
+          );
+          fetchPosts(); // Refresh the view
+        })
+        .catch(error => {
+          console.error("Error cancelling application:", error);
+          alert("Failed to cancel application. Please try again.");
+        });
+      } else {
+        // Apply
+        postRef.update({
+          AppliedUsers: firebase.firestore.FieldValue.arrayUnion(currentUser.email),
+          CurrentCount: firebase.firestore.FieldValue.increment(1)
+        })
+        .then(() => {
+          appliedVolunteerPostIds.push(postId);
+          appliedVolunteerEventDates.push(eventDate);
+          fetchPosts(); // Refresh the view
+        })
+        .catch(error => {
+          console.error("Error applying:", error);
+          alert("Failed to apply. Please try again.");
+        });
+      }
+    }
+  </script>
+</body>
+</html>
