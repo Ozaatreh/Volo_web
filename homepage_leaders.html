@@ -25,6 +25,11 @@
       padding: 0;
     }
     
+    .event-date {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
+    }
     /* Drawer Styles */
     .drawer {
       position: fixed;
@@ -164,6 +169,8 @@
     .user-info {
       display: flex;
       align-items: center;
+      flex-direction: column;
+      text-align: center;
     }
     
     .user-avatar {
@@ -696,7 +703,7 @@
           <div class="card">
             <div class="post-header">
               <div class="post-actions">
-                <span class="status-dot ${post.status}"></span>
+                <span class="status-dot ${post.status}"onclick="showStatus('${post.status}')"></span>
                 <div class="more-options-container">
                   <i class="material-icons" onclick="togglePopupMenu('${post.id}')">more_horiz</i>
                   <div class="popup-menu" id="popup-menu-${post.id}">
@@ -708,8 +715,12 @@
                 </div>
               </div>
               <div class="user-info">
-                <span>${post.Username || "Unknown"}</span>
+                
                 <img src="${post.UserImage || 'assets/photo_2024-11-02_19-33-14.jpg'}" class="user-avatar">
+                <div class="user-name">
+                  <span>${post.Username || "Unknown"}</span>
+                  <div class="event-date">Event date: ${formattedDate}</div>
+                </div>
               </div>
             </div>
             

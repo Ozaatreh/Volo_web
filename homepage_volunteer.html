@@ -164,6 +164,8 @@
     .user-info {
       display: flex;
       align-items: center;
+      flex-direction: column;
+      text-align: center;
     }
     
     .user-avatar {
@@ -172,6 +174,12 @@
       border-radius: 50%;
       margin-left: 8px;
       object-fit: cover;
+    }
+    
+    .event-date {
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
     }
     
     .post-content {
@@ -391,56 +399,55 @@
   <div class="overlay" id="overlay"></div>
   
   <!-- Drawer -->
-  <div class="drawer" id="drawer">
-    <div class="drawer-header">
-      <img src="https://raw.githubusercontent.com/Ozaatreh/GP_Volo/refs/heads/main/assets/volo_icon1.png" alt="VOLO Logo">
-    </div>
-    
-    <div class="drawer-content">
-      <a href="Users_Toggle_page.html" class="drawer-item">
-        <i class="material-icons">home</i>
-        <span>Home</span>
-      </a>
-      
-      <a href="setting_page.html" class="drawer-item">
-        <i class="material-icons">settings</i>
-        <span>Settings</span>
-      </a>
-      
-      <a href="FAQ.html" class="drawer-item">
-        <i class="material-icons">contact_support</i>
-        <span>FAQ</span>
-      </a>
-      
-      <a href="about_us_page.html" class="drawer-item">
-        <i class="material-icons">group</i>
-        <span>About us</span>
-      </a>
-      
-      <a href="Contact_us_page.html" class="drawer-item">
-        <i class="material-icons">phone</i>
-        <span>Contact us</span>
-      </a>
-      
-      <a href="history.html" class="drawer-item">
-        <i class="material-icons">history</i>
-        <span>History</span>
-      </a>
-      
-      <a href="users_log_page.html" class="drawer-item">
-        <i class="material-icons">people_outline</i>
-        <span>Userslog</span>
-      </a>
-    </div>
-    
-    <div class="drawer-footer">
-      <a href="login_register_page.html" class="drawer-item">
-        <i class="material-icons">logout</i>
-        <span>Logout</span>
-      </a>
-    </div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <img src="https://raw.githubusercontent.com/Ozaatreh/GP_Volo/refs/heads/main/assets/volo_icon1.png" alt="VOLO Logo">
   </div>
-
+  
+  <div class="drawer-content">
+    <a href="Users_Toggle_page.html" class="drawer-item">
+      <i class="material-icons">home</i>
+      <span>Home</span>
+    </a>
+    
+    <a href="setting_page.html" class="drawer-item">
+      <i class="material-icons">settings</i>
+      <span>Settings</span>
+    </a>
+    
+    <a href="FAQ.html" class="drawer-item">
+      <i class="material-icons">contact_support</i>
+      <span>FAQ</span>
+    </a>
+    
+    <a href="about_us_page.html" class="drawer-item">
+      <i class="material-icons">group</i>
+      <span>About us</span>
+    </a>
+    
+    <a href="Contact_us_page.html" class="drawer-item">
+      <i class="material-icons">phone</i>
+      <span>Contact us</span>
+    </a>
+    
+    <a href="history.html" class="drawer-item">
+      <i class="material-icons">history</i>
+      <span>History</span>
+    </a>
+    
+    <a href="users_log_page.html" class="drawer-item">
+      <i class="material-icons">people_outline</i>
+      <span>Userslog</span>
+    </a>
+  </div>
+  
+  <div class="drawer-footer">
+    <a href="login_register_page.html" class="drawer-item" style="color: #f44336;">
+      <i class="material-icons">logout</i>
+      <span>Logout</span>
+    </a>
+  </div>
+</div>
   <!-- Posts Container -->
   <div id="posts-container">
     <div class="loading">
@@ -627,16 +634,20 @@
       snapshot.forEach(doc => {
         const post = doc.data();
         post.id = doc.id;
-        
+        const eventDate = post.EventDate ? post.EventDate.toDate() : new Date();
         const hasApplied = appliedVolunteerPostIds.includes(post.id);
         const hasLocation = post.Latitude && post.Longitude;
         const locationText = post.Location || 'Location not specified';
+        
+        // Format the date as "MM/DD/YYYY"
+        const formattedDate = (eventDate.getMonth() + 1) + '/' + eventDate.getDate() + '/' + eventDate.getFullYear();
         
         postsHTML += `
           <div class="card">
             <div class="post-header">
               <div class="post-actions">
                 <span class="status-dot ${post.status}"></span>
+                 
                 <div class="more-options-container">
                   <i class="material-icons" onclick="togglePopupMenu('${post.id}')">more_horiz</i>
                   <div class="popup-menu" id="popup-menu-${post.id}">
@@ -648,8 +659,11 @@
                 </div>
               </div>
               <div class="user-info">
-                <span>${post.Username || "Unknown"}</span>
                 <img src="${post.UserImage || 'assets/photo_2024-11-02_19-33-14.jpg'}" class="user-avatar">
+                <div class="user-name">
+                  <span>${post.Username || "Unknown"}</span>
+                  <div class="event-date">Event date: ${formattedDate}</div>
+                </div>
               </div>
             </div>
             
@@ -659,7 +673,7 @@
                    onclick="showEventLocation(${hasLocation ? post.Latitude : 0}, ${hasLocation ? post.Longitude : 0}, '${locationText}')">
                   location_on
                 </i>
-               
+                <span>${locationText}</span>
               </div>
               
               <p>${post.PostMessage}</p>
