@@ -58,7 +58,7 @@
             try {
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
                 console.log("Login successful:", userCredential.user);
-                window.location.href = "homepage_volunteer.html"; 
+                window.location.href = "homepage_university.html"; 
             } catch (error) {
                 errorMessage.innerText = error.message;
             }

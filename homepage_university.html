@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>University Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        @keyframes animatedGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(45deg, #5d8ee8, #81a5e3, #556ee6, #3a7ae9);
+            background-size: 300% 300%;
+            animation: animatedGradient 8s ease infinite;
+            color: #333;
+        }
+        
+        .drawer {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: #ffffff;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            transition: left 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .drawer.open {
+            left: 0;
+        }
+
+        .drawer-header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .drawer-header img {
+            width: 130px;
+            height: 130px;
+        }
+
+        .drawer-list {
+            padding: 20px 0;
+        }
+
+        .drawer-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .drawer-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .drawer-item i {
+            margin-right: 15px;
+            color: #4285F4;
+        }
+
+        .drawer-item span {
+            font-family: 'Roboto', sans-serif;
+            font-size: 18px;
+            font-weight: 300;
+            color: #333;
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .drawer-overlay.open {
+            display: block;
+        }
+
+        .menu-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .app-bar {
+            background-color: transparent;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .app-title {
+            font-size: 20px;
+            color: #f6f8fa;
+            margin-right: 40px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+        
+        .post-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+            border: 1px solid #e0e0e0;
+        }
+        
+        .post-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .post-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .post-content {
+            margin-bottom: 15px;
+        }
+        
+        .post-image {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .progress-container {
+            margin: 15px 0;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e0e0e0;
+            margin-bottom: 5px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background-color: #4285F4;
+        }
+        
+        .progress-fill.leaders {
+            background-color: orange;
+        }
+        
+        .progress-label {
+            text-align: right;
+            font-size: 14px;
+            color: #fefefe;
+        }
+        
+        .chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        
+        .chip {
+            background-color: #e0e0e0;
+            padding: 5px 10px;
+            border-radius: 16px;
+            font-size: 12px;
+        }
+        
+        .chip.leader {
+            background-color: #CE8C35;
+            color: white;
+        }
+        
+        .divider {
+            height: 2px;
+            background-color: #e0e0e0;
+            margin: 10px 0;
+        }
+        
+        .create-post {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.2);
+        }
+        
+        .post-input-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .post-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            resize: none;
+        }
+        
+        .icon-button {
+            background: none;
+            border: none;
+            color: #4285F4;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        
+        .post-button {
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 15px;
+            cursor: pointer;
+        }
+        
+        .event-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .event-field {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .event-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .status-dot.upcoming {
+            background-color: #0F9D58;
+        }
+        
+        .status-dot.in_progress {
+            background-color: #F4B400;
+        }
+        
+        .status-dot.completed {
+            background-color: #DB4437;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #faf9f9;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+        
+        .tab.active {
+            background-color: white;
+            color: #4285F4;
+            font-weight: 500;
+        }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .modal-option {
+            padding: 10px;
+            margin: 5px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        
+        .modal-option:hover {
+            background-color: #f0f0f0;
+        }
+        
+        .modal-option-icon {
+            margin-right: 10px;
+        }
+        
+        /* Map container */
+        #map-container {
+            height: 300px;
+            margin-top: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+        
+        .map-instructions {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+       <!-- Menu Button -->
+       <button class="menu-button" onclick="toggleDrawer()">
+        <span class="material-icons">menu</span>
+    </button>
+
+    <!-- Drawer Overlay -->
+    <div class="drawer-overlay" id="drawer-overlay" onclick="toggleDrawer()"></div>
+
+    <!-- Drawer -->
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <img src="assets/volo_icon1.png" alt="Logo">
+        </div>
+        <div class="drawer-list">
+            <div class="drawer-item" onclick="navigateTo('Users_Toggle_page')">
+                <i class="material-icons">home</i>
+                <span>Home</span>
+            </div>
+            
+            <div class="drawer-item" onclick="navigateTo('setting_page')">
+                <i class="material-icons">settings</i>
+                <span>Settings</span>
+            </div>
+            
+            <div class="drawer-item" onclick="navigateTo('FAQ')">
+                <i class="material-icons">contact_support</i>
+                <span>FAQ</span>
+            </div>
+            
+            <div class="drawer-item" onclick="navigateTo('about_us_page')">
+                <i class="material-icons">group</i>
+                <span>About us</span>
+            </div>
+            
+            <div class="drawer-item" onclick="navigateTo('Contact_us_page')">
+                <i class="material-icons">phone</i>
+                <span>Contact us</span>
+            </div>
+            
+            <div class="drawer-item" onclick="navigateTo('/history')">
+                <i class="material-icons">history</i>
+                <span>History</span>
+            </div>
+            
+            <div class="drawer-item" onclick="navigateTo('users_log_page')">
+                <i class="material-icons">people_outline</i>
+                <span>Userslog</span>
+            </div>
+        </div>
+        
+        <div class="drawer-item" style="margin-top: auto; margin-bottom: 25px;" onclick="logout()">
+            <i class="material-icons">logout</i>
+            <span>Logout</span>
+        </div>
+    </div>
+
+    <div class="app-bar">
+        <h1 class="app-title">H o m e</h1>
+    </div>
+    
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="filterPosts('all')">All Posts</div>
+            <div class="tab" onclick="filterPosts('upcoming')">Upcoming</div>
+            <div class="tab" onclick="filterPosts('in_progress')">In Progress</div>
+        </div>
+        
+        <div class="create-post">
+            <div id="image-preview" style="display: none;">
+                <img id="preview-image" class="post-image">
+                <button class="icon-button" onclick="clearImage()">
+                    <span class="material-icons">cancel</span>
+                </button>
+            </div>
+            
+            <div class="post-input-row">
+                <textarea class="post-input" placeholder="Post Something.." id="post-message"></textarea>
+                <button class="icon-button" onclick="pickImage()">
+                    <span class="material-icons">image</span>
+                </button>
+                <button class="post-button" onclick="postEvent()">Post</button>
+            </div>
+            
+            <div class="event-details">
+                <div class="event-field">
+                    <input type="number" class="event-input" id="event-size" placeholder="Volunteers Count">
+                </div>
+                <div class="event-field">
+                    <input type="number" class="event-input" id="leaders-count" placeholder="Leaders Count">
+                </div>
+            </div>
+            
+            <div class="event-details">
+                <div class="event-field" style="flex: 1;">
+                    <input type="text" class="event-input" id="event-date" placeholder="Event Date" readonly>
+                </div>
+                <button class="icon-button" onclick="openDatePicker()">
+                    <span class="material-icons">calendar_today</span>
+                </button>
+            </div>
+            
+            <div class="event-details">
+                <div class="event-field" style="flex: 1;">
+                    <input type="text" class="event-input" id="event-location" placeholder="Event Location" readonly>
+                </div>
+                <button class="icon-button" onclick="openLocationPicker()">
+                    <span class="material-icons">location_on</span>
+                </button>
+            </div>
+        </div>
+        
+        <div id="posts-container">
+            <div class="empty-state">Loading your posts...</div>
+        </div>
+    </div>
+    
+    <!-- Post Options Modal -->
+    <div class="modal" id="post-options-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Post Options</h3>
+                <button class="modal-close" onclick="closeModal('post-options-modal')">&times;</button>
+            </div>
+            <div class="modal-option" onclick="deleteCurrentPost()">
+                <span class="material-icons modal-option-icon">delete</span>
+                <span>Delete Post</span>
+            </div>
+            <div class="modal-option" onclick="reportProblem()">
+                <span class="material-icons modal-option-icon">report</span>
+                <span>Report Problem</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Location Picker Modal -->
+    <div class="modal" id="location-picker-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Event Location</h3>
+                <button class="modal-close" onclick="closeModal('location-picker-modal')">&times;</button>
+            </div>
+            <div id="map-container">
+                <div id="map"></div>
+            </div>
+            <p class="map-instructions">Click on the map to select location</p>
+            <button class="post-button" style="margin-top: 15px;" onclick="saveLocation()">Confirm Location</button>
+        </div>
+    </div>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <script>
+           // Drawer functionality
+           function toggleDrawer() {
+            const drawer = document.getElementById('drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        function navigateTo(page) {
+            // Close drawer first
+            toggleDrawer();
+            
+            // In a real app, you would handle navigation here
+            console.log(`Navigating to ${page}`);
+            // For demo purposes, we'll just show an alert
+            alert(`Navigating to ${page}`);
+        }
+
+        function logout() {
+            toggleDrawer();
+            // In a real app, you would handle logout here
+            alert('Logging out...');
+            // Redirect to login page
+            window.location.href = 'login.html';
+        }
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAlZJFpV4ApjkaQE0tH3P_VfSmK9PHgihk",
+            authDomain: "volunteer-community-c691d.firebaseapp.com",
+            projectId: "volunteer-community-c691d",
+            storageBucket: "volunteer-community-c691d.appspot.com",
+            messagingSenderId: "534367058264",
+            appId: "1:534367058264:web:a6b3fa5bfb58f186a7cd2d",
+            measurementId: "G-0HDWR98XPT"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+        
+        // Global variables
+        let currentUser = null;
+        let currentPostId = null;
+        let selectedLocation = null;
+        let map = null;
+        let marker = null;
+        let currentFilter = 'all';
+        let postsUnsubscribe = null;
+        
+        // Initialize date picker
+        const datePicker = flatpickr("#event-date", {
+            minDate: "today",
+            dateFormat: "Y-m-d",
+            defaultDate: new Date()
+        });
+        
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    currentUser = user;
+                    setupPostsListener();
+                } else {
+                    // Redirect to login if not authenticated
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+        
+        function setupPostsListener() {
+            // Unsubscribe from previous listener if exists
+            if (postsUnsubscribe) {
+                postsUnsubscribe();
+            }
+            
+            let query = db.collection('Posts')
+                .where('UserEmail', '==', currentUser.email)
+                .orderBy('timestamp', 'desc');
+            
+            postsUnsubscribe = query.onSnapshot(snapshot => {
+                const postsContainer = document.getElementById('posts-container');
+                postsContainer.innerHTML = '';
+                
+                if (snapshot.empty) {
+                    postsContainer.innerHTML = '<div class="empty-state">No Posts Yet.. Post Something!</div>';
+                    return;
+                }
+                
+                snapshot.forEach(doc => {
+                    const post = doc.data();
+                    const postId = doc.id;
+                    
+                    // Apply current filter
+                    if (currentFilter === 'all' || post.status === currentFilter) {
+                        createPostElement(post, postId);
+                    }
+                });
+                
+                // If no posts match the filter
+                if (postsContainer.children.length === 0) {
+                    postsContainer.innerHTML = '<div class="empty-state">No posts match the current filter</div>';
+                }
+            }, error => {
+                console.error('Posts listener error:', error);
+                document.getElementById('posts-container').innerHTML = 
+                    '<div class="empty-state">Error loading posts. Please refresh.</div>';
+            });
+        }
+        
+        // function filterPosts(filter) {
+        //     currentFilter = filter;
+            
+        //     // Update active tab
+        //     document.querySelectorAll('.tab').forEach(tab => {
+        //         tab.classList.remove('active');
+        //     });
+        //     event.target.classList.add('active');
+            
+        //     // Reload posts with new filter
+        //     setupPostsListener();
+        // }
+        
+        function createPostElement(post, postId) {
+            // Status dot color based on status
+            let statusColor = 'completed';
+            if (post.status === 'upcoming') statusColor = 'upcoming';
+            if (post.status === 'in_progress') statusColor = 'in_progress';
+
+            // Format event date
+            let eventDate = '';
+            if (post.EventDate) {
+                const date = post.EventDate.toDate();
+                eventDate = date.toISOString().split('T')[0];
+            }
+
+            // Get location coordinates
+            let locationText = '';
+            let latitude = 0;
+            let longitude = 0;
+
+            if (post.Location) {
+                if (typeof post.Location === 'string') {
+                    locationText = post.Location;
+                    const parts = post.Location.split(',');
+                    if (parts.length === 2) {
+                        latitude = parseFloat(parts[0].trim());
+                        longitude = parseFloat(parts[1].trim());
+                    }
+                } else if (post.Location.latitude && post.Location.longitude) {
+                    latitude = post.Location.latitude;
+                    longitude = post.Location.longitude;
+                    locationText = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+                }
+            }
+
+            const postElement = document.createElement('div');
+            postElement.className = 'post-container';
+            postElement.id = `post-${postId}`;
+
+            postElement.innerHTML = `
+                <div class="post-header">
+                    <div>
+                        <strong>${post.Username || post.UserEmail || 'Anonymous'}</strong>
+                        <div>Status: ${post.status.replace('_', ' ')}</div>
+                        ${eventDate ? `<div>Event Date: ${eventDate}</div>` : ''}
+                    </div>
+                    <div class="post-actions">
+                        <button class="icon-button" onclick="showPostMenu('${postId}')">
+                            <span class="material-icons">more_horiz</span>
+                        </button>
+                        <span class="status-dot ${statusColor}" onclick="showStatus('${post.status}')"></span>
+                        ${locationText ? `
+                        <button class="icon-button" onclick="viewLocationOnMap(${latitude}, ${longitude})">
+                            <span class="material-icons" style="color: red; font-size: 21px;">location_on</span>
+                        </button>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p>${post.PostMessage || ''}</p>
+                    ${post.ImageUrl ? `<img src="${post.ImageUrl}" class="post-image">` : ''}
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill leaders" style="width: ${((post.LeaderCount || 0) / (post.LeaderMaxCount || 1)) * 100}%"></div>
+                        </div>
+                        <div class="progress-label">${post.LeaderCount || 0} / ${post.LeaderMaxCount || 0} (Leaders)</div>
+                    </div>
+                    <div class="chip-container">
+                        ${(post.Leaders || []).map(leader => `<span class="chip leader">${leader}</span>`).join('')}
+                    </div>
+                    <div class="divider"></div>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${((post.CurrentCount || 0) / (post.TargetCount || 1)) * 100}%"></div>
+                        </div>
+                        <div class="progress-label">${post.CurrentCount || 0} / ${post.TargetCount || 0} (Volunteers)</div>
+                    </div>
+                    <div class="chip-container">
+                        ${(post.AppliedUsers || []).map(user => `<span class="chip">${user}</span>`).join('')}
+                    </div>
+                    <div class="divider"></div>
+                </div>
+            `;
+
+            document.getElementById('posts-container').appendChild(postElement);
+        }
+        
+        async function postEvent() {
+    const message = document.getElementById('post-message').value;
+    const eventSize = parseInt(document.getElementById('event-size').value) || 10;
+    const leadersCount = parseInt(document.getElementById('leaders-count').value) || 3;
+    const eventDate = document.getElementById('event-date').value;
+    const location = document.getElementById('event-location').value;
+    const imageFile = document.getElementById('preview-image').src.startsWith('data:image') ? 
+        dataURLtoBlob(document.getElementById('preview-image').src) : null;
+    
+    if (!message || !eventDate) {
+        alert('Please fill in all required fields');
+        return;
+    }
+
+    try {
+        // Show loading state
+        const postButton = document.querySelector('.post-button');
+        postButton.disabled = true;
+        postButton.textContent = 'Posting...';
+
+        // 1. FIRST GET USER DATA FROM USERS COLLECTION
+        const userDoc = await db.collection('Users').doc(currentUser.email).get();
+        
+        if (!userDoc.exists) {
+            throw new Error("Your profile is not complete. Please update your profile first.");
+        }
+
+        const userData = userDoc.data();
+        const username = userData.username;
+        const userType = userData.userType;
+
+        if (!username) {
+            throw new Error("Username not found in your profile. Please update your profile.");
+        }
+
+        // 2. HANDLE IMAGE UPLOAD IF EXISTS
+        let imageUrl = null;
+        if (imageFile) {
+            try {
+                const storageRef = storage.ref().child(`post_images/${currentUser.email}/${Date.now()}`);
+                const snapshot = await storageRef.put(imageFile);
+                imageUrl = await snapshot.ref.getDownloadURL();
+            } catch (storageError) {
+                console.error("Image upload failed:", storageError);
+                throw new Error("Failed to upload image. Please try again.");
+            }
+        }
+
+        // 3. PARSE LOCATION DATA
+        let locationData = null;
+        if (location) {
+            const parts = location.split(',');
+            if (parts.length === 2) {
+                locationData = {
+                    latitude: parseFloat(parts[0].trim()),
+                    longitude: parseFloat(parts[1].trim())
+                };
+            }
+        }
+
+        // 4. CREATE POST OBJECT
+        const postData = {
+            PostMessage: message,
+            TargetCount: eventSize,
+            LeaderMaxCount: leadersCount,
+            CurrentCount: 0,
+            LeaderCount: 0,
+            Username: username,
+            UserType: userType,
+            UserEmail: currentUser.email,
+            UserId: currentUser.email,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'upcoming',
+            ImageUrl:imageUrl || null,
+            EventDate: new Date(eventDate),
+            Location: locationData || location,
+            Leaders: [],
+            AppliedUsers: []
+        };
+
+        // Add image URL if uploaded
+        if (imageUrl) {
+            postData.ImageUrl = imageUrl;
+        }
+
+        // 5. SAVE TO FIRESTORE
+        await db.collection('Posts').add(postData);
+
+        // 6. CLEAR FORM
+        document.getElementById('post-message').value = '';
+        document.getElementById('event-size').value = '';
+        document.getElementById('leaders-count').value = '';
+        document.getElementById('event-date').value = '';
+        document.getElementById('event-location').value = '';
+        clearImage();
+
+        // 7. RESET BUTTON
+        postButton.disabled = false;
+        postButton.textContent = 'Post';
+        
+        //  AUTO-REFRESH POSTS
+        setupPostsListener();
+
+        // 8. SHOW SUCCESS MESSAGE
+        alert('Post created successfully!');
+        
+    } catch (error) {
+        console.error('Error posting event:', error);
+        
+        // RESET BUTTON ON ERROR
+        const postButton = document.querySelector('.post-button');
+        postButton.disabled = false;
+        postButton.textContent = 'Post';
+        
+        // SHOW ERROR MESSAGE
+        alert(`Error: ${error.message}`);
+    }
+}
+// Optional: Add this function for a nicer notification than alert()
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.style.position = 'fixed';
+    toast.style.bottom = '20px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.backgroundColor = '#4CAF50';
+    toast.style.color = 'white';
+    toast.style.padding = '12px 24px';
+    toast.style.borderRadius = '4px';
+    toast.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+    toast.style.zIndex = '1000';
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s';
+        setTimeout(() => toast.remove(), 500);
+    }, 3000);
+}
+        
+        // Enable debug logging
+firebase.firestore.setLogLevel('debug');
+
+// Global variables
+// let currentUser = null;
+
+// Initialize app
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("Initializing...");
+    
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            console.log("User signed in:", user.email);
+            currentUser = user;
+            loadAllPosts(); // First try loading all posts without filters
+        } else {
+            console.log("No user, redirecting to login");
+            window.location.href = 'login.html';
+        }
+    });
+});
+
+// 1. First try loading ALL posts without any filters
+function loadAllPosts() {
+    console.log("Attempting to load ALL posts...");
+    
+    db.collection("Posts").get()
+    .then(querySnapshot => {
+        console.log(`Found ${querySnapshot.size} total posts`);
+        
+        if (querySnapshot.empty) {
+            console.log("No posts found in entire collection");
+            document.getElementById('posts-container').innerHTML = 
+                '<div class="empty-state">No posts exist in database</div>';
+            return;
+        }
+        
+        // Display all posts we found
+        const postsContainer = document.getElementById('posts-container');
+        postsContainer.innerHTML = '';
+        
+        querySnapshot.forEach(doc => {
+            console.log("Post ID:", doc.id, "Data:", doc.data());
+            createPostElement(doc.data(), doc.id);
+        });
+        
+        // Now try to load user-specific posts
+        loadUserPosts();
+    })
+    .catch(error => {
+        console.error("Error loading all posts:", error);
+        document.getElementById('posts-container').innerHTML = 
+            '<div class="empty-state">Error loading posts. Check console.</div>';
+    });
+}
+
+// 2. Now try loading just the current user's posts
+function loadUserPosts() {
+    console.log("Now trying to load posts for user:", currentUser.email);
+    
+    // Try multiple possible field names
+    const fieldNames = ['UserEmail', 'userEmail', 'userId', 'email'];
+    
+    tryFieldNames(fieldNames, 0);
+}
+
+function tryFieldNames(fieldNames, index) {
+    if (index >= fieldNames.length) {
+        console.log("Tried all field names, no posts found");
+        return;
+    }
+    
+    const fieldName = fieldNames[index];
+    console.log(`Trying field name: ${fieldName}`);
+    
+    let query;
+    if (fieldName === 'userId') {
+        query = db.collection("Posts").where(fieldName, "==", currentUser.uid);
+    } else {
+        query = db.collection("Posts").where(fieldName, "==", currentUser.email);
+    }
+    
+    query.get()
+    .then(querySnapshot => {
+        console.log(`Found ${querySnapshot.size} posts with field ${fieldName}`);
+        
+        if (querySnapshot.empty) {
+            console.log(`No posts found with ${fieldName}, trying next`);
+            tryFieldNames(fieldNames, index + 1);
+            return;
+        }
+        
+        // Display these posts
+        const postsContainer = document.getElementById('posts-container');
+        postsContainer.innerHTML = '<div class="empty-state">My Posts:</div>';
+        
+        querySnapshot.forEach(doc => {
+            console.log("My post:", doc.id, doc.data());
+            createPostElement(doc.data(), doc.id);
+        });
+    })
+    .catch(error => {
+        console.error(`Error with field ${fieldName}:`, error);
+        tryFieldNames(fieldNames, index + 1);
+    });
+}
+
+        function clearImage() {
+            document.getElementById('image-preview').style.display = 'none';
+            document.getElementById('preview-image').src = '';
+        }
+        
+        // Date picker
+        function openDatePicker() {
+            datePicker.open();
+        }
+        
+        // Location picker
+        function openLocationPicker() {
+            document.getElementById('location-picker-modal').style.display = 'flex';
+            
+            // Initialize map if not already done
+            if (!map) {
+                map = L.map('map').setView([51.505, -0.09], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+                
+                // Add click event to place marker
+                map.on('click', function(e) {
+                    if (marker) {
+                        map.removeLayer(marker);
+                    }
+                    marker = L.marker(e.latlng).addTo(map);
+                    selectedLocation = e.latlng;
+                });
+            }
+        }
+        
+        function saveLocation() {
+            if (selectedLocation) {
+                document.getElementById('event-location').value = 
+                    `${selectedLocation.lat.toFixed(6)}, ${selectedLocation.lng.toFixed(6)}`;
+                closeModal('location-picker-modal');
+            } else {
+                alert('Please select a location on the map');
+            }
+        }
+        
+        // View location on map
+        function viewLocationOnMap(lat, lng) {
+            document.getElementById('location-picker-modal').style.display = 'flex';
+            
+            if (!map) {
+                map = L.map('map').setView([lat, lng], 13);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+            } else {
+                map.setView([lat, lng], 13);
+            }
+            
+            // Clear any existing marker
+            if (marker) {
+                map.removeLayer(marker);
+            }
+            
+            // Add marker at the event location
+            marker = L.marker([lat, lng]).addTo(map);
+            
+            // Change modal title
+            document.querySelector('#location-picker-modal .modal-header h3').textContent = 'Event Location';
+            
+            // Hide the confirm button since we're just viewing
+            document.querySelector('#location-picker-modal .post-button').style.display = 'none';
+        }
+        
+        // Post management
+        function showPostMenu(postId) {
+            currentPostId = postId;
+            document.getElementById('post-options-modal').style.display = 'flex';
+        }
+        
+        async function deleteCurrentPost() {
+            if (!currentPostId) return;
+            
+            try {
+                await db.collection('Posts').doc(currentPostId).delete();
+                document.getElementById(`post-${currentPostId}`).remove();
+                closeModal('post-options-modal');
+                
+                // Check if any posts left
+                const postsContainer = document.getElementById('posts-container');
+                if (postsContainer.children.length === 0) {
+                    postsContainer.innerHTML = '<div class="empty-state">No Posts Yet.. Post Something!</div>';
+                }
+            } catch (error) {
+                console.error('Error deleting post:', error);
+                alert('Failed to delete post. Please try again.');
+            }
+        }
+        
+        function reportProblem() {
+            closeModal('post-options-modal');
+            alert('Problem reported. Our team will look into it.');
+        }
+        
+        function showStatus(status) {
+            const statusMap = {
+                'upcoming': 'Upcoming - Event is currently open for volunteers',
+                'in_progress': 'In Progress - Event is currently happening',
+                'completed': 'Completed - Event is finished'
+            };
+            alert(`Event Status: ${statusMap[status] || status}`);
+        }
+        
+        // Modal handling
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            
+            // Reset location picker confirm button if viewing
+            if (modalId === 'location-picker-modal') {
+                document.querySelector('#location-picker-modal .post-button').style.display = 'block';
+                document.querySelector('#location-picker-modal .modal-header h3').textContent = 'Select Event Location';
+            }
+        }
+        
+        // Helper function to convert data URL to blob
+        function dataURLtoBlob(dataurl) {
+            const arr = dataurl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new Blob([u8arr], { type: mime });
+        }
+    </script>
+</body>
+</html>
